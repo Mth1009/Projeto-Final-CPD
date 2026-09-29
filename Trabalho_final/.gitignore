@@ -1,0 +1,22 @@
+# Cache do Python
+__pycache__/
+*.py[cod]
+
+# Arquivos de IDE
+.vs/
+.vscode/
+
+# Arquivos gerados
+build/
+output/
+
+# Dados que não devem ir ao repositório
+dados-trabalho-completo/
+dados-trabalho-pequeno/
+
+# Arquivos criados pelo macOS
+__MACOSX/
+.DS_Store
+
+# Pacotes compactados
+*.zip
