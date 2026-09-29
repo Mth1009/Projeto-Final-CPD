@@ -1,7 +1,6 @@
 
-import pandas as pd
 import time
-import random
+import sys
 
 from hash_table import HashTable
 from trie import Node, Trie
@@ -172,4 +171,9 @@ def main():
             print(f"Comando desconhecido: '{cmd}'")
 # --- Ponto de Entrada do Script ---
 if __name__ == "__main__":
-    main()
+    if "--gui" in sys.argv:
+        from gui import executar
+
+        executar()
+    else:
+        main()

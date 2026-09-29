@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MovieLens Explorer</title>
+  <style>
+    :root{--bg:#080d19;--panel:#101827;--card:#151f31;--line:#263247;--text:#f8fafc;--muted:#91a0b8;--blue:#38bdf8;--blue2:#0284c7;--green:#34d399;--yellow:#fbbf24;--red:#fb7185}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input,select{font:inherit}
+    .app{min-height:100vh;display:grid;grid-template-columns:260px 1fr}aside{background:var(--panel);border-right:1px solid var(--line);padding:28px 16px 18px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+    .logo{font-size:21px;font-weight:850;letter-spacing:-.5px;padding:0 10px 30px}.logo span{color:var(--blue)}.eyebrow{color:var(--muted);font-size:11px;font-weight:750;letter-spacing:1.2px;padding:0 10px 8px}
+    .nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:var(--muted);text-align:left;border-radius:9px;padding:12px 13px;cursor:pointer;transition:.16s}.nav button:hover{background:#172238;color:var(--text)}.nav button.active{background:#1b2940;color:var(--text);box-shadow:inset 3px 0 var(--blue)}.nav button:disabled{opacity:.35;cursor:not-allowed}.nav i{font-style:normal;color:var(--blue);display:inline-block;width:30px;font-weight:800}
+    .dataset{margin-top:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px}.dataset label{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.8px;margin-bottom:8px}.dataset select,.dataset button{width:100%;border-radius:8px;border:1px solid var(--line);padding:10px;color:var(--text)}.dataset select{background:var(--panel)}.dataset button{margin-top:8px;background:#26344a;cursor:pointer;font-weight:700}.dataset button:hover{background:var(--blue2)}
+    main{padding:28px 34px;min-width:0}.header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}h1{font-size:29px;margin:0 0 5px;letter-spacing:-.8px}.subtitle{color:var(--muted);margin:0;font-size:14px}.badge{padding:8px 12px;border-radius:99px;font-size:10px;font-weight:850;letter-spacing:.5px;white-space:nowrap}.badge.loading{background:#3a2b16;color:var(--yellow)}.badge.ready{background:#10382e;color:var(--green)}.badge.error{background:#401e2a;color:var(--red)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0 14px}.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px}.stat strong{display:block;font-size:23px;letter-spacing:-.5px}.stat:nth-child(1) strong{color:var(--blue)}.stat:nth-child(2) strong{color:var(--green)}.stat:nth-child(3) strong{color:var(--yellow)}.stat:nth-child(4) strong{color:var(--red)}.stat span{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.8px}
+    .search-card,.results{background:var(--card);border:1px solid var(--line);border-radius:12px}.search-card{padding:15px;margin-bottom:14px}.form{display:flex;align-items:end;gap:12px}.field{flex:1}.field.small{flex:0 0 130px}.field label{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.7px;margin:0 0 6px}.field input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--text);outline:none;padding:11px 12px}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #38bdf819}.primary{border:0;border-radius:8px;background:var(--blue2);color:white;padding:12px 22px;font-weight:750;cursor:pointer;white-space:nowrap}.primary:hover{background:var(--blue)}.primary:disabled{opacity:.45;cursor:wait}
+    .results{overflow:hidden;min-height:390px}.results-head{padding:15px 17px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.results-head strong{font-size:12px;letter-spacing:.6px}#count{color:var(--muted);font-size:12px}.table-wrap{overflow:auto;max-height:480px}table{border-collapse:collapse;width:100%;min-width:870px}th{position:sticky;top:0;background:#172238;color:var(--muted);font-size:10px;letter-spacing:.55px;text-align:left;padding:12px 14px;z-index:1}td{padding:12px 14px;border-top:1px solid #202c40;font-size:13px}tbody tr:hover{background:#182338}.num{text-align:center}.title-cell{font-weight:650;max-width:330px}.genres{color:#b3c0d3}.rating{color:var(--yellow);font-weight:750}
+    .empty{padding:95px 20px;text-align:center;color:var(--muted)}.empty b{display:block;color:var(--text);font-size:16px;margin-bottom:7px}.overlay{position:fixed;inset:0;background:#080d19e8;z-index:10;display:grid;place-items:center;backdrop-filter:blur(5px)}.overlay.hidden{display:none}.loader{width:min(470px,90vw);background:var(--card);border:1px solid var(--line);border-radius:15px;padding:30px;box-shadow:0 24px 80px #0008}.loader h2{margin:0 0 8px;font-size:20px}.loader p{color:var(--muted);margin:0 0 20px}.progress{height:7px;background:var(--line);border-radius:8px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue2),var(--blue));transition:width .3s}.toast{position:fixed;right:25px;bottom:25px;background:#3f1d2a;color:#fecdd3;border:1px solid #7f1d3e;padding:13px 17px;border-radius:10px;z-index:20;max-width:440px;box-shadow:0 10px 40px #0008}.hidden{display:none}
+    @media(max-width:850px){.app{grid-template-columns:1fr}aside{position:static;height:auto}.nav{grid-template-columns:repeat(2,1fr)}.dataset{margin-top:18px}main{padding:24px 18px}.stats{grid-template-columns:repeat(2,1fr)}.form{flex-wrap:wrap}.field.small{flex:1 0 120px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="logo">MOVIE<span>LENS</span></div><div class="eyebrow">EXPLORAR</div>
+    <nav class="nav">
+      <button data-view="prefixo" class="active" disabled><i>⌕</i>Buscar por título</button>
+      <button data-view="usuario" disabled><i>♙</i>Perfil do usuário</button>
+      <button data-view="genero" disabled><i>★</i>Ranking por gênero</button>
+      <button data-view="tags" disabled><i>#</i>Combinar tags</button>
+      <button data-view="periodo" disabled><i>◷</i>Melhores por período</button>
+    </nav>
+    <div class="dataset"><label>CONJUNTO DE DADOS</label><select id="mode"><option value="amostra">Amostra rápida</option><option value="completo">Base completa</option></select><button id="reload">Recarregar base</button></div>
+  </aside>
+  <main>
+    <header class="header"><div><h1 id="title">Buscar por título</h1><p class="subtitle" id="subtitle">Encontre filmes usando a busca por prefixo da Trie.</p></div><div class="badge loading" id="badge">● CARREGANDO</div></header>
+    <section class="stats"><div class="stat"><strong id="s-filmes">—</strong><span>FILMES</span></div><div class="stat"><strong id="s-usuarios">—</strong><span>USUÁRIOS</span></div><div class="stat"><strong id="s-avaliacoes">—</strong><span>AVALIAÇÕES</span></div><div class="stat"><strong id="s-tags">—</strong><span>TAGS</span></div></section>
+    <section class="search-card"><form class="form" id="search-form"></form></section>
+    <section class="results"><div class="results-head"><strong>RESULTADOS</strong><span id="count">Aguardando os dados</span></div><div class="table-wrap" id="table-wrap"><div class="empty"><b>Preparando a aplicação</b>Os resultados aparecerão aqui.</div></div></section>
+  </main>
+</div>
+<div class="overlay" id="overlay"><div class="loader"><h2>Preparando o MovieLens Explorer</h2><p id="loading-text">Inicializando estruturas de dados...</p><div class="progress"><div class="bar" id="bar"></div></div></div></div>
+<div class="toast hidden" id="toast"></div>
+<script>
+const views={
+ prefixo:{title:'Buscar por título',sub:'Encontre filmes usando a busca por prefixo da Trie.',fields:[['prefixo','Início do título','Toy','']]},
+ usuario:{title:'Perfil do usuário',sub:'Veja as 20 melhores avaliações de um usuário.',fields:[['usuario','ID do usuário','1','small']]},
+ genero:{title:'Ranking por gênero',sub:'Compare os filmes mais bem avaliados de cada gênero.',fields:[['genero','Gênero','Drama',''],['quantidade','Quantidade','10','small']]},
+ tags:{title:'Combinar tags',sub:'Encontre a interseção entre duas tags do catálogo.',fields:[['tag_1','Primeira tag','sci-fi',''],['tag_2','Segunda tag','action','']]},
+ periodo:{title:'Melhores por período',sub:'Explore clássicos por intervalo de lançamento.',fields:[['quantidade','Quantidade','10','small'],['ano_inicial','Ano inicial','1990','small'],['ano_final','Ano final','2015','small']]}
+};
+let current='prefixo',poller=null;const $=s=>document.querySelector(s),fmt=n=>new Intl.NumberFormat('pt-BR').format(n);
+function renderForm(){const v=views[current];$('#title').textContent=v.title;$('#subtitle').textContent=v.sub;$('#search-form').innerHTML=v.fields.map(([n,l,val,c])=>`<div class="field ${c}"><label for="${n}">${l.toUpperCase()}</label><input id="${n}" name="${n}" value="${val}" autocomplete="off"></div>`).join('')+'<button class="primary">Buscar filmes</button>';$('#search-form').onsubmit=search;empty('Preencha os campos e faça uma busca','Pronto para explorar')}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');current=b.dataset.view;renderForm()});
+function empty(text,title='Nenhum resultado ainda'){$('#table-wrap').innerHTML=`<div class="empty"><b>${title}</b>${text}</div>`;$('#count').textContent=text}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),5000)}
+async function load(){clearInterval(poller);$('#overlay').classList.remove('hidden');$('#badge').className='badge loading';$('#badge').textContent='● CARREGANDO';document.querySelectorAll('.nav button').forEach(b=>b.disabled=true);try{await fetch('/api/load',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({modo:$('#mode').value})});poller=setInterval(status,400);status()}catch(e){toast('Não foi possível iniciar o servidor de dados.')}}
+async function status(){try{const r=await fetch('/api/status'),s=await r.json();$('#loading-text').textContent=s.mensagem||'Carregando...';$('#bar').style.width=(s.progresso||0)+'%';if(s.erro){clearInterval(poller);$('#overlay').classList.add('hidden');$('#badge').className='badge error';$('#badge').textContent='● ERRO';toast(s.erro)}if(s.pronto){clearInterval(poller);$('#overlay').classList.add('hidden');$('#badge').className='badge ready';$('#badge').textContent=`● PRONTO  ${s.duracao.toFixed(1)}s`;for(const k of ['filmes','usuarios','avaliacoes','tags'])$('#s-'+k).textContent=fmt(s.stats[k]);document.querySelectorAll('.nav button').forEach(b=>b.disabled=false);renderForm()}}catch(e){clearInterval(poller);toast('A conexão com a aplicação foi interrompida.')}}
+async function search(ev){ev.preventDefault();const button=$('#search-form button');button.disabled=true;button.textContent='Buscando...';const campos={};new FormData(ev.target).forEach((v,k)=>campos[k]=v);const start=performance.now();try{const r=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo:current,campos})});const data=await r.json();if(!r.ok)throw new Error(data.erro||'Falha na consulta');renderRows(data.resultados,performance.now()-start)}catch(e){toast(e.message)}finally{button.disabled=false;button.textContent='Buscar filmes'}}
+function renderRows(rows,ms){if(!rows.length){empty('Tente outros termos ou amplie os filtros.','Nenhum filme encontrado');return}$('#count').textContent=`${rows.length} filme${rows.length===1?'':'s'} • ${ms.toFixed(1)} ms`;const wrap=$('#table-wrap');wrap.innerHTML='<table><thead><tr><th class="num">ID</th><th>TÍTULO</th><th>GÊNEROS</th><th class="num">ANO</th><th class="num">NOTA GLOBAL</th><th class="num">AVALIAÇÕES</th><th class="num">MINHA NOTA</th></tr></thead><tbody></tbody></table>';const body=wrap.querySelector('tbody');for(const m of rows){const tr=document.createElement('tr');const vals=[m.movie_id,m.titulo,m.generos,m.ano??'—','★ '+m.nota_global.toFixed(2),fmt(m.avaliacoes),m.nota_usuario==null?'—':m.nota_usuario.toFixed(1)];vals.forEach((v,i)=>{const td=document.createElement('td');td.textContent=v;if(i===1)td.className='title-cell';if(i===2)td.className='genres';if([0,3,4,5,6].includes(i))td.classList.add('num');if(i===4)td.classList.add('rating');tr.appendChild(td)});body.appendChild(tr)}}
+$('#reload').onclick=load;renderForm();load();
+</script>
+</body>
+</html>
