@@ -10,9 +10,8 @@ __pycache__/
 build/
 output/
 
-# Dados que não devem ir ao repositório
+# A base completa é grande demais para o repositório
 dados-trabalho-completo/
-dados-trabalho-pequeno/
 
 # Arquivos criados pelo macOS
 __MACOSX/
